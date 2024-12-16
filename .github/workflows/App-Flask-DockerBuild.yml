@@ -132,7 +132,7 @@ jobs:
         with:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
-          admin: 'false'
+          admin: 'true'
           use-kubelogin: 'true'
 
       - name: Create the namespace if it does not exist
