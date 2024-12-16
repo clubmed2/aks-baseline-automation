@@ -129,11 +129,8 @@ jobs:
           kubeloginversion: 'v0.0.11'
         run: |
           wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
-          kubelogin convert-kubeconfig -l azurecli
 
       - name: Kubelogin-2
-        env:
-          kubeloginversion: 'v0.0.11'
         run: |
           unzip kubelogin-linux-amd64.zip
           sudo mv bin/linux_amd64/kubelogin /usr/bin
