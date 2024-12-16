@@ -124,7 +124,7 @@ jobs:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
 
-      - name: Kubelogin-Install
+      - name: Kubelogin Install
         env:
           kubeloginversion: 'v0.0.11'
         run: |
@@ -132,10 +132,17 @@ jobs:
           unzip kubelogin-linux-amd64.zip
           sudo mv bin/linux_amd64/kubelogin /usr/bin
 
-
-      - name: Kubelogin-Run
+      - name: Kubelogin Unzip
+        run: |
+          unzip kubelogin-linux-amd64.zip
+          sudo mv bin/linux_amd64/kubelogin /usr/bin
+          
+      - name: Kubelogin Run
         run: |
           kubelogin convert-kubeconfig -l azurecli
+
+      - name: Wait for kubelogin
+        run: |
           sleep 5
 
       - name: Create the namespace if it does not exist
