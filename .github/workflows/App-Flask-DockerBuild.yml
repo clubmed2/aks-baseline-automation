@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Get application code from repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
 
       - name: Job parameter inspection
         run: |
@@ -61,7 +61,7 @@ jobs:
           echo "ACR name is ${{ inputs.ACRNAME }}"
 
       - name: Azure Login
-        uses: Azure/login@v1.4.3
+        uses: Azure/login@v2.2.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -104,34 +104,34 @@ jobs:
 
     steps:
       - name: Get application k8s manifests from repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
 
       - name: Azure Login
-        uses: Azure/login@v1.4.3
+        uses: Azure/login@v2.2.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Install Kubectl
-        uses: azure/setup-kubectl@v3.0
+        uses: azure/setup-kubectl@v4.0.0
         with:
-            version: 'latest'
+          version: 'latest'
 
       - name: Set the target Azure Kubernetes Service (AKS) cluster.
-        uses: azure/aks-set-context@v2.0
+        uses: azure/aks-set-context@v3
         with:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
 
-      - name: Kubelogin
-        env:
-          kubeloginversion: 'v0.0.11'
+      - name: Setup kubelogin
+        uses: Azure/use-kubelogin@v1
+        with:
+          kubelogin-version: 'latest'
+
+      - name: Setup kubelogin
         run: |
-          wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
-          unzip kubelogin-linux-amd64.zip
-          sudo mv bin/linux_amd64/kubelogin /usr/bin
-          kubelogin convert-kubeconfig -l spn
+          kubelogin convert-kubeconfig -l azurecli
 
       - name: Create the namespace if it does not exist
         if: ${{ inputs.NAMESPACE }} != 'default'
@@ -140,7 +140,7 @@ jobs:
           if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ inputs.NAMESPACE }}; fi
 
       - name: Deploy app to AKS
-        uses: azure/k8s-deploy@v1.5
+        uses: azure/k8s-deploy@v4.9
         env:
           ACRNAME: "${{ inputs.ACRNAME}}"
         with:
