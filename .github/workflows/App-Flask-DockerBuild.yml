@@ -137,15 +137,19 @@ jobs:
       - name: Kubelogin Run
         run: |
           sudo mv bin/linux_amd64/kubelogin /usr/bin
+
+      - name: Kubelogin Run
+        run: |
           kubelogin convert-kubeconfig -l azurecli
 
       - name: Wait for kubelogin
         run: |
-          sleep 5
+          sleep 10
 
       - name: Create the namespace if it does not exist
         if: ${{ inputs.NAMESPACE }} != 'default'
         run: |
+          kubelogin convert-kubeconfig -l azurecli
           cmdOut=$(kubectl get namespaces ${{ inputs.NAMESPACE }} -o json | jq -r '.status.phase')
           if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ inputs.NAMESPACE }}; fi
 
