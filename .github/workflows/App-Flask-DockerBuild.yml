@@ -124,13 +124,19 @@ jobs:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
 
-      - name: Kubelogin
+      - name: Kubelogin-1
         env:
           kubeloginversion: 'v0.0.11'
         run: |
           wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
           unzip kubelogin-linux-amd64.zip
+
+      - name: Kubelogin-2
+        run: |
           sudo mv bin/linux_amd64/kubelogin /usr/bin
+
+      - name: Kubelogin-3
+        run: |
           kubelogin convert-kubeconfig -l azurecli
 
       - name: Create the namespace if it does not exist
