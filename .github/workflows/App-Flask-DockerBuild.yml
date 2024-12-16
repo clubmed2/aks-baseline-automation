@@ -123,6 +123,7 @@ jobs:
         with:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
+          use-kubelogin: 'true'
 
       - name: Setup kubelogin
         uses: Azure/use-kubelogin@v1
