@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     env:
-      ACRNAME: "${{ inputs.ACRNAME}}"
+      ACRNAME: "${{ inputs.ACRNAME }}"
 
     steps:
       - name: Get application code from repo
@@ -144,11 +144,11 @@ jobs:
       - name: Deploy app to AKS
         uses: azure/k8s-deploy@v4.9
         env:
-          ACRNAME: "${{ inputs.ACRNAME}}"
+          ACRNAME: "${{ inputs.ACRNAME }}"
         with:
           manifests: |
-           workloads/flask/deployment.yaml
-           workloads/flask/ingress.yaml
+            workloads/flask/deployment.yaml
+            workloads/flask/ingress.yaml
           images: |
             ${{ env.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.sha }}
           namespace: ${{ inputs.NAMESPACE }}
