@@ -15,7 +15,7 @@ env:
   ACRNAME: "hseungh"
   RG: "seunghyun-rg"
   AKSNAME: "hong-aks"
-  APPNAME: "flask-deploy"
+  APPNAME: "flask"
   NAMESPACE: "flask-namespace"
 
 permissions:
