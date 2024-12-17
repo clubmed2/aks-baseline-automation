@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Get application code from repo
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Job parameter inspection
         run: |
@@ -64,7 +64,7 @@ jobs:
           echo "ACR name is ${{ env.ACRNAME }}"
 
       - name: Azure Login
-        uses: Azure/login@v2.2.0
+        uses: Azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -106,17 +106,17 @@ jobs:
 
     steps:
       - name: Get application k8s manifests from repo
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: Azure/login@v2.2.0
+        uses: Azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Install Kubectl
-        uses: azure/setup-kubectl@v4.0.0
+        uses: azure/setup-kubectl@v4
         with:
           version: 'latest'
 
@@ -130,7 +130,7 @@ jobs:
       #     kubelogin convert-kubeconfig -l azurecli
 
       - name: Set the target Azure Kubernetes Service (AKS) cluster.
-        uses: azure/aks-set-context@v3
+        uses: azure/aks-set-context@v4
         with:
           cluster-name: ${{ env.AKSNAME }}
           resource-group: ${{ env.RG }}
@@ -144,7 +144,7 @@ jobs:
           if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ env.NAMESPACE }}; fi
 
       - name: Deploy app to AKS
-        uses: azure/k8s-deploy@v4.9
+        uses: azure/k8s-deploy@v4
         with:
           manifests: |
             workloads/flask/deployment.yaml
