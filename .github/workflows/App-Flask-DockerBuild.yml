@@ -129,6 +129,11 @@ jobs:
       #     sudo mv bin/linux_amd64/kubelogin /usr/bin
       #     kubelogin convert-kubeconfig -l azurecli
 
+      - name: Install Kubelogin
+        uses: azure/use-kubelogin@v1
+        with:
+          kubelogin-version: 'v0.0.24'
+
       - name: Set the target Azure Kubernetes Service (AKS) cluster.
         uses: azure/aks-set-context@v4
         with:
