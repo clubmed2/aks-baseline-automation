@@ -122,4 +122,3 @@ jobs:
           images: |
             ${{ env.ACRNAME }}.azurecr.io/${{ env.APPNAME }}:${{ github.sha }}
           namespace: ${{ env.NAMESPACE }}
-          force: true
