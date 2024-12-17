@@ -40,9 +40,9 @@ on:
 env:
   ACRNAME: "hseungh"
   RG: "seunghyun-rg"
-  AKSNAME: "hongaks"
+  AKSNAME: "hong-aks"
   APPNAME: "flask"
-  NAMESPACE: "default"
+  NAMESPACE: "flask-namespace"
 
 permissions:
   id-token: write
