@@ -7,15 +7,14 @@ on:
     branches:
       - main
     paths:
-      # - '.github/workflows/**'
       - '.github/workflows/App-Flask-DockerBuild.yml'
       - workloads/flask/**
   workflow_dispatch:
 
 env:
-  ACRNAME: "hseungh"
-  RG: "seunghyun-rg"
-  AKSNAME: "hong-aks"
+  ACRNAME: "hseungh" # 변경
+  RG: "seunghyun-rg" # 변경
+  AKSNAME: "hong-aks" # 변경
   APPNAME: "flask"
   NAMESPACE: "flask-namespace"
 
