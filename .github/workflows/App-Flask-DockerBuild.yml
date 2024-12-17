@@ -3,45 +3,56 @@
 name: App Deploy Flask - Docker Build
 
 on:
-  workflow_dispatch:
-    inputs:
-      RG:
-        description: 'The Resource Group where your resources are deployed'
-        required: true
-        type: string
-      AKSNAME:
-        description: 'The Name of the AKS resource'
-        required: true
-        type: string
-      ACRNAME:
-        description: 'The Name of the ACR resource'
-        required: true
-        type: string
-      APPNAME:
-        description: 'The Name of the Application to deploy'
-        default: "flask"
-        required: true
-        type: string
-      NAMESPACE:
-        description: 'The Kubernetes Namespace to deploy the Application to'
-        default: "default"
-        required: false
-        type: string
-      ENVIRONMENT:
-        description: 'A GitHub Environment to pull action secrets from'
-        required: true
-        type: environment
+  push:
+    branches:
+      - main
+    paths:
+      # - '.github/workflows/**'
+      - '.github/workflows/App-Flask-DockerBuild.yml'
+  # workflow_dispatch:
+    # inputs:
+    #   RG:
+    #     description: 'The Resource Group where your resources are deployed'
+    #     required: true
+    #     type: string
+    #   AKSNAME:
+    #     description: 'The Name of the AKS resource'
+    #     required: true
+    #     type: string
+    #   ACRNAME:
+    #     description: 'The Name of the ACR resource'
+    #     required: true
+    #     type: string
+    #   APPNAME:
+    #     description: 'The Name of the Application to deploy'
+    #     default: "flask"
+    #     required: true
+    #     type: string
+    #   NAMESPACE:
+    #     description: 'The Kubernetes Namespace to deploy the Application to'
+    #     default: "default"
+    #     required: false
+    #     type: string
+    #   ENVIRONMENT:
+    #     description: 'A GitHub Environment to pull action secrets from'
+    #     required: true
+    #     type: environment
+env:
+  ENVIRONMENT: "prod"
+  ACRNAME: "hseungh"
+  RG: "seunghyun-rg"
+  AKSNAME: "hongaks"
+  APPNAME: "flask"
+  NAMESPACE: "default"
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 
 jobs:
   BuildPush:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.ENVIRONMENT }}
-    env:
-      ACRNAME: "${{ inputs.ACRNAME }}"
+    environment: ${{ env.ENVIRONMENT }}
 
     steps:
       - name: Get application code from repo
@@ -49,9 +60,9 @@ jobs:
 
       - name: Job parameter inspection
         run: |
-          echo "RG is ${{ inputs.RG }}"
-          echo "AKS name is ${{ inputs.AKSNAME }}"
-          echo "ACR name is ${{ inputs.ACRNAME }}"
+          echo "RG is ${{ env.RG }}"
+          echo "AKS name is ${{ env.AKSNAME }}"
+          echo "ACR name is ${{ env.ACRNAME }}"
 
       - name: Azure Login
         uses: Azure/login@v2.2.0
@@ -63,8 +74,8 @@ jobs:
       - name: Connect to Azure Container Registry (ACR)
         id: acrconnect
         run: |
-          echo "Retrieving access token from $ACRNAME"
-          TOKEN=$(az acr login -n $ACRNAME --expose-token)
+          echo "Retrieving access token from ${{ env.ACRNAME }}"
+          TOKEN=$(az acr login -n ${{ env.ACRNAME }} --expose-token)
 
           if [ -z "$TOKEN" ]
           then
@@ -76,23 +87,22 @@ jobs:
           LOGINSERVER=$(echo $TOKEN | jq -r ".loginServer")
 
           echo "ACR Login Server: $LOGINSERVER"
-          echo "::set-output name=loginServer::$LOGINSERVER"
+          echo "loginServer=$LOGINSERVER" >> $GITHUB_OUTPUT
 
           echo "Passing token as stdin to docker login"
           echo $ACRTOKEN | docker login $LOGINSERVER -u 00000000-0000-0000-0000-000000000000 --password-stdin
 
       - name: Container build and push to a Azure Container Registry (ACR)
         env:
-          ACRSERVER: "${{ steps.acrconnect.outputs.loginServer }}"
-          APPNAME: "${{ inputs.APPNAME }}"
+          ACRSERVER: ${{ steps.acrconnect.outputs.loginServer }}
         run: |
-          cd "workloads/$APPNAME"
-          docker build . -t $ACRSERVER/$APPNAME:${{ github.sha }}
-          docker push $ACRSERVER/$APPNAME:${{ github.sha }}
+          cd "workloads/${{ env.APPNAME }}"
+          docker build . -t ${{ env.ACRSERVER }}/${{ env.APPNAME }}:${{ github.sha }}
+          docker push ${{ env.ACRSERVER }}/${{ env.APPNAME }}:${{ github.sha }}
 
   Deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.ENVIRONMENT }}
+    environment: ${{ env.ENVIRONMENT }}
     needs: [BuildPush]
 
     steps:
@@ -123,25 +133,23 @@ jobs:
       - name: Set the target Azure Kubernetes Service (AKS) cluster.
         uses: azure/aks-set-context@v3
         with:
-          cluster-name: ${{ inputs.AKSNAME }}
-          resource-group: ${{ inputs.RG }}
+          cluster-name: ${{ env.AKSNAME }}
+          resource-group: ${{ env.RG }}
           # admin: 'true'
           # use-kubelogin: 'true'
 
       - name: Create the namespace if it does not exist
-        if: ${{ inputs.NAMESPACE }} != 'default'
+        if: ${{ env.NAMESPACE != 'default' }}
         run: |
-          cmdOut=$(kubectl get namespaces ${{ inputs.NAMESPACE }} -o json | jq -r '.status.phase')
-          if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ inputs.NAMESPACE }}; fi
+          cmdOut=$(kubectl get namespaces ${{ env.NAMESPACE }} -o json | jq -r '.status.phase')
+          if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ env.NAMESPACE }}; fi
 
       - name: Deploy app to AKS
         uses: azure/k8s-deploy@v4.9
-        env:
-          ACRNAME: "${{ inputs.ACRNAME }}"
         with:
           manifests: |
             workloads/flask/deployment.yaml
             workloads/flask/ingress.yaml
           images: |
-            ${{ env.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.sha }}
-          namespace: ${{ inputs.NAMESPACE }}
+            ${{ env.ACRNAME }}.azurecr.io/${{ env.APPNAME }}:${{ github.sha }}
+          namespace: ${{ env.NAMESPACE }}
