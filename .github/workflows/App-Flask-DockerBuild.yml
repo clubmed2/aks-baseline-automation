@@ -148,8 +148,9 @@ jobs:
           if [ "$cmdOut" != 'Active' ]; then kubectl create namespace ${{ env.NAMESPACE }}; fi
 
       - name: Deploy app to AKS
-        uses: azure/k8s-deploy@v4
+        uses: azure/k8s-deploy@v5
         with:
+          action: deploy
           manifests: |
             workloads/flask/deployment.yaml
             workloads/flask/ingress.yaml
