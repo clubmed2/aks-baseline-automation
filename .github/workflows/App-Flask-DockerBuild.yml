@@ -111,14 +111,14 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Kubelogin
-        env:
-          kubeloginversion: 'v0.0.11'
-        run: |
-          wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
-          unzip kubelogin-linux-amd64.zip
-          sudo mv bin/linux_amd64/kubelogin /usr/bin
-          kubelogin convert-kubeconfig -l azurecli
+      # - name: Kubelogin
+      #   env:
+      #     kubeloginversion: 'v0.0.11'
+      #   run: |
+      #     wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
+      #     unzip kubelogin-linux-amd64.zip
+      #     sudo mv bin/linux_amd64/kubelogin /usr/bin
+      #     kubelogin convert-kubeconfig -l azurecli
 
       - name: Set the target Azure Kubernetes Service (AKS) cluster.
         uses: azure/aks-set-context@v3
@@ -126,7 +126,7 @@ jobs:
           cluster-name: ${{ inputs.AKSNAME }}
           resource-group: ${{ inputs.RG }}
           # admin: 'true'
-          use-kubelogin: 'true'
+          # use-kubelogin: 'true'
 
       - name: Create the namespace if it does not exist
         if: ${{ inputs.NAMESPACE }} != 'default'
