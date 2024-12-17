@@ -10,38 +10,12 @@ on:
       # - '.github/workflows/**'
       - '.github/workflows/App-Flask-DockerBuild.yml'
   workflow_dispatch:
-    # inputs:
-    #   RG:
-    #     description: 'The Resource Group where your resources are deployed'
-    #     required: true
-    #     type: string
-    #   AKSNAME:
-    #     description: 'The Name of the AKS resource'
-    #     required: true
-    #     type: string
-    #   ACRNAME:
-    #     description: 'The Name of the ACR resource'
-    #     required: true
-    #     type: string
-    #   APPNAME:
-    #     description: 'The Name of the Application to deploy'
-    #     default: "flask"
-    #     required: true
-    #     type: string
-    #   NAMESPACE:
-    #     description: 'The Kubernetes Namespace to deploy the Application to'
-    #     default: "default"
-    #     required: false
-    #     type: string
-    #   ENVIRONMENT:
-    #     description: 'A GitHub Environment to pull action secrets from'
-    #     required: true
-    #     type: environment
+
 env:
   ACRNAME: "hseungh"
   RG: "seunghyun-rg"
   AKSNAME: "hong-aks"
-  APPNAME: "flask"
+  APPNAME: "flask-deploy"
   NAMESPACE: "flask-namespace"
 
 permissions:
@@ -119,15 +93,6 @@ jobs:
         uses: azure/setup-kubectl@v4
         with:
           version: 'latest'
-
-      # - name: Kubelogin
-      #   env:
-      #     kubeloginversion: 'v0.0.11'
-      #   run: |
-      #     wget https://github.com/Azure/kubelogin/releases/download/${{ env.kubeloginversion }}/kubelogin-linux-amd64.zip
-      #     unzip kubelogin-linux-amd64.zip
-      #     sudo mv bin/linux_amd64/kubelogin /usr/bin
-      #     kubelogin convert-kubeconfig -l azurecli
 
       - name: Install Kubelogin
         uses: azure/use-kubelogin@v1
