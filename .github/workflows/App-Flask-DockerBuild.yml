@@ -31,13 +31,6 @@ on:
         description: 'A GitHub Environment to pull action secrets from'
         required: true
         type: environment
-    secrets:
-      AZURE_CLIENT_ID:
-        required: true
-      AZURE_TENANT_ID:
-        required: true
-      AZURE_SUBSCRIPTION_ID:
-        required: true
 
 permissions:
       id-token: write
