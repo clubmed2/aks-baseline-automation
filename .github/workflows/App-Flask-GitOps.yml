@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
 
 env:
-  ACRNAME: "hseungh" # 변경
+  ACRNAME: "hseungh2" # 변경
   APPNAME: "flask"
 
 permissions:
