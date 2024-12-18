@@ -8,7 +8,6 @@ on:
       - main
     paths:
       - '.github/workflows/App-Flask-DockerBuild.yml'
-      - workloads/flask/**
   workflow_dispatch:
 
 env:
