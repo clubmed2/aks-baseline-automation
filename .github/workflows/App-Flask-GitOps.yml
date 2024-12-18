@@ -38,9 +38,6 @@ jobs:
       # Get application code from repo
       - name: Get application code from repo
         uses: actions/checkout@v4
-        with:
-          repository: ${{ env.AppRepo }}
-          #ref: ${{ env.AppRepoRef }}
       
       # Logs into your Azure subscription
       - uses: azure/login@v2
